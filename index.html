@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>NPI Project Plan</title>
+  <meta http-equiv="Cache-Control" content="no-store" />
+  <style>
+    :root{ --bg:hsl(0 100% 96%); --bar:hsl(0 100% 90%); --accent:#b91c1c; --link:#ff0000; --text:#1b1b1f; --card:#fff; --border:#e5e7eb; --muted:#6b7280; }
+    *{ box-sizing:border-box }
+    html,body{ height:100% }
+    body{ margin:0; padding:0; background:var(--bg); color:var(--text); font-family:Arial, Helvetica, sans-serif; line-height:1.45 }
+    a{ color:var(--link); text-decoration:none }
+    a:hover{ text-decoration:underline }
+    .topbar{ position:sticky; top:0; z-index:10; display:flex; align-items:center; justify-content:space-between; gap:16px; padding:10px 16px; background:var(--bar); border-bottom:1px solid rgba(0,0,0,.05) }
+    .brand{ font-size:20px; font-weight:800; letter-spacing:.2px }
+    .container{ max-width:1100px; margin:0 auto; padding:18px }
+    .controls{ display:flex; flex-wrap:wrap; gap:12px; align-items:end; margin-bottom:14px }
+    .controls-right{ display:flex; gap:10px }
+    .grow{ flex:1 1 260px }
+    label{ display:block; font-weight:700; margin:8px 0 6px }
+    select{ width:100%; padding:10px 12px; border:1px solid var(--border); border-radius:12px; background:#fff; color:var(--text); font-size:14px }
+    .btn{ display:inline-flex; align-items:center; justify-content:center; gap:8px; cursor:pointer; user-select:none; padding:10px 14px; border-radius:12px; border:1px solid transparent; background:var(--accent); color:#fff; font-weight:700 }
+    .btn.secondary{ background:#fff; color:var(--accent); border-color:var(--accent) }
+    .card{ background:var(--card); border:1px solid var(--border); border-radius:16px; padding:20px; box-shadow:0 6px 24px rgba(0,0,0,.06) }
+    .iframewrap{ background:var(--card); border:1px solid var(--border); border-radius:16px; height:calc(100vh - 210px); overflow:hidden; position:relative }
+    iframe{ width:100%; height:100%; border:0 }
+    .muted{ color:var(--muted); font-size:14px }
+    .footer{ text-align:center; font-size:12px; color:var(--muted); padding:20px }
+    @media (max-width:720px){ .iframewrap{ height:calc(100vh - 260px) } .controls-right{ width:100% } }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">Ren Internal</div>
+    <div class="muted">Power Apps Embed</div>
+  </header>
+
+  <main class="container">
+    <div class="controls">
+      <div class="grow">
+        <label for="app-select">Power App</label>
+        <select id="app-select"></select>
+      </div>
+      <div class="controls-right">
+        <button class="btn" id="open-btn">Open in new tab</button>
+        <button class="btn secondary" id="full-btn">Fullscreen</button>
+      </div>
+    </div>
+
+    <div class="iframewrap">
+      <iframe id="app-frame" title="Power App embed" allowfullscreen referrerpolicy="no-referrer"></iframe>
+    </div>
+
+    <p class="muted" style="margin-top:10px">For any issues, please contact Logan MacDonald. <br> <em>lmacdonald@renrns.com</em></p>
+  </main>
+
+  <footer class="footer">© <span id="year"></span> Renaissance Network Reinvent</footer>
+
+  <script>
+    // ======== CONFIG — ADD YOUR APPS ========
+    const APPS = [
+      { name: "Sales NPI", url: "https://apps.powerapps.com/play/18383258-b74f-4984-973d-a2436c386b73?source=iframe" },
+      { name: "Engineering NPI", url: "https://apps.powerapps.com/play/65345288-96b3-40e5-8c99-615914fd4419?souce=iframe" },
+      { name: "Finance NPI", url: "https://apps.powerapps.com/play/a78bde0b-0c07-4d21-a660-3fb615e1d4ee?source=iframe" },
+      { name: "SupplyChain NPI", url: "https://apps.powerapps.com/play/98de46b7-c59d-4344-a7e2-83f92df31d08?source=iframe" },
+    ];
+    // ========================================
+
+    const $ = (s) => document.querySelector(s);
+    const selectEl = $('#app-select');
+    const frame = $('#app-frame');
+    const yearEl = $('#year');
+    if(yearEl) yearEl.textContent = new Date().getFullYear();
+
+    function initApps(){
+      selectEl.innerHTML = '';
+      APPS.forEach((a,i)=>{
+        const opt = document.createElement('option');
+        opt.value = a.url; opt.textContent = a.name; if(i===0) opt.selected = true; selectEl.appendChild(opt);
+      });
+      frame.src = APPS[0]?.url || '';
+    }
+
+    selectEl.addEventListener('change', ()=>{ frame.src = selectEl.value; });
+    document.getElementById('open-btn').addEventListener('click', ()=>{ const url=selectEl.value; if(url) window.open(url,'_blank'); });
+    document.getElementById('full-btn').addEventListener('click', ()=>{ if(frame.requestFullscreen) frame.requestFullscreen(); else if(frame.webkitRequestFullscreen) frame.webkitRequestFullscreen(); });
+
+    initApps();
+  </script>
+</body>
+</html>
